@@ -3,10 +3,29 @@ import {setItem} from '@/helpers/persistanceStorage';
 
 const state = {
     isSubmitting: false,
+    isLoading: false,
     currentUser: null,
     validationErrors: null,
     isLoggedIn: null
 };
+
+export const getterTypes = {
+    currentUser: '[auth] currentUser',
+    isLoggedIn: '[auth] isLoggedIn',
+    isAnonymous: '[auth] isAnonymous'
+}
+
+const getters = {
+    [getterTypes.currentUser]: state => {
+        return state.currentUser
+    },
+    [getterTypes.isLoggedIn]: state => {
+        return Boolean(state.isLoggedIn);
+    },
+    [getterTypes.isAnonymous]: state => {
+        return state.isLoggedIn === false;
+    }
+}
 
 export const mutationTypes = {
     registerStart: '[auth] registerStart',
@@ -15,7 +34,11 @@ export const mutationTypes = {
 
     loginStart: '[auth] loginStart',
     loginSuccess: '[auth] loginSuccess',
-    loginFailure: '[auth] loginFailure'
+    loginFailure: '[auth] loginFailure',
+
+    getCurrentUserStart: '[auth] getCurrentUserStart',
+    getCurrentUserSuccess: '[auth] getCurrentUserSuccess',
+    getCurrentUserFailure: '[auth] getCurrentUserFailure'
 }
 
 // в мутациях код должен быть чистым, тут только меняется состояние
@@ -46,12 +69,27 @@ const mutations = {
     [mutationTypes.loginFailure](state, payload) {
         state.isSubmitting = false;
         state.validationErrors = payload;
+    },
+
+    [mutationTypes.getCurrentUserStart](state) {
+        state.isLoading = true
+    },
+    [mutationTypes.getCurrentUserSuccess](state, payload) {
+        state.isLoading = false;
+        state.currentUser = payload;
+        state.isLoggedIn = true;
+    },
+    [mutationTypes.getCurrentUserFailure](state) {
+        state.isLoading = false;
+        state.isLoggedIn = false;
+        state.currentUser = null;
     }
 };
 
 export const actionTypes = {
     register: '[auth] register',
-    login: '[auth] login'
+    login: '[auth] login',
+    getCurrentUser: '[auth] getCurrentUser'
 }
 
 // экшены - хорошее место, чтобы делать сайд-эффекты
@@ -74,7 +112,6 @@ const actions = {
     },
 
     [actionTypes.login](context, credentials) {
-        // желательно у каждого экшена возвращать промис, даже если он пока не нужен
         return new Promise((resolve) => {
             context.commit(mutationTypes.loginStart);
             authApi
@@ -89,10 +126,26 @@ const actions = {
                 });
         });
     },
+
+    [actionTypes.getCurrentUser](context) {
+        return new Promise((resolve) => {
+            context.commit(mutationTypes.getCurrentUserStart);
+            authApi
+                .getCurrentUser()
+                .then((response) => {
+                    context.commit(mutationTypes.getCurrentUserSuccess, response.data.user);
+                    resolve(response.data.user);
+                })
+                .catch(() => {
+                    context.commit(mutationTypes.getCurrentUserFailure);
+                });
+        });
+    }
 };
 
 export default {
     state,
     mutations,
     actions,
+    getters
 };

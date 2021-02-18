@@ -60,7 +60,6 @@ export default {
     },
     methods: {
         onSubmit() {
-            console.log('submit');
             this.$store
                 .dispatch(actionTypes.register, {
                     email: this.email,
@@ -69,7 +68,7 @@ export default {
                 })
                 .then((user) => {
                     console.log('successfully registered user', user);
-                    this.$router.push({name: 'home'}); // переброс пользователя на главную
+                    this.$router.push({name: 'globalFeed'}); // переброс пользователя на главную
                 });
         },
     },

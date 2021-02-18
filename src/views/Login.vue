@@ -61,7 +61,7 @@
                         password: this.password
                     })
                     .then(() => {
-                        this.$router.push({name: 'home'}); // переброс пользователя на главную
+                        this.$router.push({name: 'globalFeed'}); // переброс пользователя на главную
                     });
             },
         },
