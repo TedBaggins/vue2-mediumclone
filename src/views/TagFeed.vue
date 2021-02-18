@@ -26,9 +26,10 @@
             McvFeed,
             McvBanner
         },
-        data() {
-            return {
-                apiUrl: '/articles'
+        computed: {
+            apiUrl() {
+                const tagName = this.$route.params.slug;
+                return `/articles?tag=${tagName}`;
             }
         }
     }
