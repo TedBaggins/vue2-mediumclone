@@ -18,7 +18,11 @@
                         <span class="date">{{article.createdAt}}</span>
                     </div>
                     <div class="pull-xs-right">
-                        ADD TO FAVORITES
+                        <McvAddToFavorites
+                            :is-favorited="article.favorited"
+                            :article-slug="article.slug"
+                            :favorites-count="article.favoritesCount"
+                        />
                     </div>
                 </div>
                 <router-link
@@ -50,6 +54,7 @@
     import {limit} from '@/helpers/vars';
     import {stringify, parseUrl} from 'query-string';
     import McvTagList from "@/components/TagList";
+    import McvAddToFavorites from '@/components/AddToFavorites';
 
     export default {
         name: 'McvFeed',
@@ -63,7 +68,8 @@
             McvTagList,
             McvPagination,
             McvLoader,
-            McvErrorMessage
+            McvErrorMessage,
+            McvAddToFavorites
         },
         data() {
             return {

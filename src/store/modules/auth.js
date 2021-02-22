@@ -42,7 +42,9 @@ export const mutationTypes = {
 
     updateCurrentUserStart: '[auth] updateCurrentUserStart',
     updateCurrentUserSuccess: '[auth] updateCurrentUserSuccess',
-    updateCurrentUserFailure: '[auth] updateCurrentUserFailure'
+    updateCurrentUserFailure: '[auth] updateCurrentUserFailure',
+
+    logout: '[auth] logout'
 }
 
 // в мутациях код должен быть чистым, тут только меняется состояние
@@ -94,6 +96,11 @@ const mutations = {
         state.currentUser = payload;
     },
     [mutationTypes.updateCurrentUserFailure]() {},
+
+    [mutationTypes.logout](state) {
+        state.currentUser = null;
+        state.isLoggedIn = false;
+    }
 };
 
 export const actionTypes = {
@@ -101,6 +108,7 @@ export const actionTypes = {
     login: '[auth] login',
     getCurrentUser: '[auth] getCurrentUser',
     updateCurrentUser: '[auth] updateCurrentUser',
+    logout: '[auth] logout'
 }
 
 // экшены - хорошее место, чтобы делать сайд-эффекты
@@ -165,6 +173,14 @@ const actions = {
                 .catch((result) => {
                     context.commit(mutationTypes.updateCurrentUserFailure, result.response.data.errors);
                 });
+        });
+    },
+
+    [actionTypes.logout](context) {
+        return new Promise((resolve) => {
+            setItem('accessToken', '');
+            context.commit(mutationTypes.logout);
+            resolve();
         });
     }
 };

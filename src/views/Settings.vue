@@ -105,6 +105,9 @@
             },
             logout() {
                 console.log('logout');
+                this.$store.dispatch(authActionTypes.logout).then(() => {
+                    this.$router.push({name: 'globalFeed'});
+                });
             }
         }
     }
