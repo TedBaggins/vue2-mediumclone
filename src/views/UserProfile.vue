@@ -94,11 +94,11 @@
         },
         watch: {
             userProfileSlug() {
-                this.UserProfile();
+                this.getUserProfile();
             }
         },
         mounted() {
-            this.UserProfile();
+            this.getUserProfile();
         },
         methods: {
             getUserProfile() {
